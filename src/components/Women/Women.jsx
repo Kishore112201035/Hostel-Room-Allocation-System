@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/Store';
@@ -16,13 +14,14 @@ export default function Home() {
 
   const [presentRoom, setPresentRoom] = useState('');
   const [hostel, setHostel] = useState('');
-  const [oldFloor, setOldFloor] = useState(''); // new state for Old Floor
+  const [oldFloor, setOldFloor] = useState('');
 
+  // rooms with custom size/shape
   const rooms = [
-    { number: 'MF', top: '37%', left: '8%' },
-    { number: 'AF', top: '25%', left: '91%' },
-    //{ number: 'HF', top: '20%', left: '50%' }, // new button
-    //{ number: 'FF', top: '75%', left: '50%' }, // new button
+    { number: 'MF', top: '31%', left: '46%', width: '50px', height: '190px', borderRadius: '10px' },
+    { number: 'AF', top: '23%', left: '92%', width: '50px', height: '80px', borderRadius: '10px' },
+    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  // circular
+    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, // rectangle
   ];
 
   function handleRoomClick(roomNum) {
@@ -49,14 +48,14 @@ export default function Home() {
       return;
     }
 
-    // prepare final values to save in sheet
+    // prepare final values
     const finalFloors = [...floors];
     const finalPrefs = [...preferences];
 
     floors.forEach((f, idx) => {
       if (f === "same") {
-        finalFloors[idx] = oldFloor;       // replace with Old Floor in sheet
-        finalPrefs[idx] = presentRoom;     // replace with Old Room (PresentRoom field)
+        finalFloors[idx] = oldFloor;
+        finalPrefs[idx] = presentRoom;
       }
     });
 
@@ -116,9 +115,9 @@ export default function Home() {
                 border: preferences[selectedPreferenceIndex] === room.number
                   ? '2px solid #fff'
                   : 'none',
-                borderRadius: '0px',
-                width: '45px',
-                height: '110px',
+                width: room.width,
+                height: room.height,
+                borderRadius: room.borderRadius,
                 color: 'white',
                 cursor: 'pointer',
                 userSelect: 'none',
@@ -189,7 +188,7 @@ export default function Home() {
                   newFloors[idx] = e.target.value;
 
                   if (e.target.value === "same") {
-                    newPrefs[idx] = presentRoom; // frontend shows PresentRoom
+                    newPrefs[idx] = presentRoom;
                   } else {
                     if (newPrefs[idx] === presentRoom) newPrefs[idx] = "";
                   }
