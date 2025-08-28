@@ -20,8 +20,9 @@ export default function Home() {
   const rooms = [
     { number: 'MF', top: '31%', left: '46%', width: '50px', height: '190px', borderRadius: '10px' },
     { number: 'AF', top: '23%', left: '92%', width: '50px', height: '80px', borderRadius: '10px' },
-    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  // circular
-    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, // rectangle
+    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  
+    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, 
+    // Write here to add more buttons
   ];
 
   function handleRoomClick(roomNum) {
@@ -60,6 +61,7 @@ export default function Home() {
     });
 
     const formBody = new URLSearchParams({
+      Category: "Women",
       Email: userEmail,
       PresentRoom: presentRoom,
       Hostel: hostel,
@@ -71,7 +73,7 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbwpZCK5FfNLYHzhxuhgmacy1GvB56WVe0slBJ-gqavi097GMLWfbgQhub1-9c-CYNbO_w/exec",
+        "https://script.google.com/macros/s/AKfycbxS0dAeWtQFVcnmgozLOcaPjklISVHwUoX15eBZ_8EHJrGLcMYfq0J-k2nOp3ax0eA0/exec",
         {
           method: 'POST',
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

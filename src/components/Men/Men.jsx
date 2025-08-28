@@ -1,28 +1,36 @@
-// src/components/Men.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/Store';
-import img from "../Men/plan.jpeg";   // ✅ keep a plan.jpeg inside /Men folder
+import img from "../Women/plan.jpeg";
 
-export default function Men() {
+export default function Home() {
   const navigate = useNavigate();
   const userEmail = useStore((state) => state.userEmail);
-  const [preferences, setPreferences] = useState(['', '', '', '']);
-  const [selectedPreferenceIndex, setSelectedPreferenceIndex] = useState(0);
-  const [name, setName] = useState('');
-  const [year, setYear] = useState('');
 
+  // floor selections and room selections
+  const [floors, setFloors] = useState(['', '', '']);
+  const [preferences, setPreferences] = useState(['', '', '']);
+  const [selectedPreferenceIndex, setSelectedPreferenceIndex] = useState(0);
+
+  const [presentRoom, setPresentRoom] = useState('');
+  const [hostel, setHostel] = useState('');
+  const [oldFloor, setOldFloor] = useState('');
+
+  // rooms with custom size/shape
   const rooms = [
-    { number: '201', top: '20%', left: '30%' },
-    { number: '202', top: '20%', left: '50%' },
-    { number: '203', top: '50%', left: '30%' },
-    { number: '204', top: '50%', left: '50%' },
+    { number: 'MF', top: '31%', left: '46%', width: '50px', height: '190px', borderRadius: '10px' },
+    { number: 'AF', top: '23%', left: '92%', width: '50px', height: '80px', borderRadius: '10px' },
+    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  
+    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, 
+    // Write here to add more buttons
   ];
 
   function handleRoomClick(roomNum) {
     const newPrefs = [...preferences];
     newPrefs[selectedPreferenceIndex] = roomNum;
     setPreferences(newPrefs);
+
+    if (!presentRoom) setPresentRoom(roomNum);
   }
 
   function handlePreferenceClick(index) {
@@ -32,27 +40,40 @@ export default function Men() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (!name || !year) {
-      alert('Please enter Name and Year');
+    if (!presentRoom || !hostel || !oldFloor) {
+      alert('Please enter Present Room, Old Hostel and Old Floor');
       return;
     }
-    if (preferences.some(p => !p)) {
-      alert('Please fill all preferences');
+    if (floors.some(f => !f) || preferences.some(p => !p)) {
+      alert('Please fill all preferences (floor + room)');
       return;
     }
 
+    // prepare final values
+    const finalFloors = [...floors];
+    const finalPrefs = [...preferences];
+
+    floors.forEach((f, idx) => {
+      if (f === "same") {
+        finalFloors[idx] = oldFloor;
+        finalPrefs[idx] = presentRoom;
+      }
+    });
+
     const formBody = new URLSearchParams({
-      Name: name,
-      Year: year,
-      Pref1: preferences[0],
-      Pref2: preferences[1],
-      Pref3: preferences[2],
-      Pref4: preferences[3]
+      Category: "Men",
+      Email: userEmail,
+      PresentRoom: presentRoom,
+      Hostel: hostel,
+      OldFloor: oldFloor,
+      Floor1: finalFloors[0], Pref1: finalPrefs[0],
+      Floor2: finalFloors[1], Pref2: finalPrefs[1],
+      Floor3: finalFloors[2], Pref3: finalPrefs[2],
     }).toString();
 
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbzBmy0PDv-CfKCmXrNDVrm0s2vzzRLY-4vr3LlXnvr04mMYeuOkv7DH12SVl0OFPNs7/exec",
+        "https://script.google.com/macros/s/AKfycbxS0dAeWtQFVcnmgozLOcaPjklISVHwUoX15eBZ_8EHJrGLcMYfq0J-k2nOp3ax0eA0/exec",
         {
           method: 'POST',
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -62,8 +83,8 @@ export default function Men() {
 
       const text = await response.text();
       alert(text);
+      navigate("/first");
 
-      navigate("/first");   // ✅ go back after submit
     } catch (error) {
       alert('Network error');
       console.error(error);
@@ -72,14 +93,15 @@ export default function Men() {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-      <h1>Welcome {userEmail} 🎉</h1>
+      <h1>MEN</h1>
 
       <form onSubmit={handleSubmit}>
+        {/* Image + room selection */}
         <div style={{ position: 'relative', display: 'inline-block', marginBottom: '2rem' }}>
           <img
             src={img}
             alt="Rooms"
-            style={{ width: '400px', height: 'auto', border: '1px solid #ccc' }}
+            style={{ width: '800px', height: 'auto', border: '1px solid #ccc' }}
           />
           {rooms.map((room) => (
             <button
@@ -91,66 +113,124 @@ export default function Men() {
                 top: room.top,
                 left: room.left,
                 transform: 'translate(-50%, -50%)',
-                backgroundColor: 'rgba(220, 20, 60, 0.7)',
-                border:
-                  preferences[selectedPreferenceIndex] === room.number
-                    ? '2px solid #fff'
-                    : 'none',
-                borderRadius: '50%',
-                width: '30px',
-                height: '30px',
+                backgroundColor: 'rgba(202, 193, 194, 0.36)',
+                border: preferences[selectedPreferenceIndex] === room.number
+                  ? '2px solid #fff'
+                  : 'none',
+                width: room.width,
+                height: room.height,
+                borderRadius: room.borderRadius,
                 color: 'white',
                 cursor: 'pointer',
                 userSelect: 'none',
               }}
-              title={`Room ${room.number}`}
             >
               {room.number}
             </button>
           ))}
         </div>
 
+        {/* User info */}
         <div style={{ marginBottom: '1rem' }}>
           <input
             type="text"
-            name="name"
-            placeholder="Your Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ marginRight: '1rem', padding: '0.5rem' }}
+            value={userEmail}
+            readOnly
+            style={{ marginRight: '1rem', padding: '0.5rem', backgroundColor: '#eee' }}
           />
           <input
             type="text"
-            name="year"
-            placeholder="Year"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            style={{ padding: '0.5rem' }}
+            placeholder="Present Room No."
+            value={presentRoom}
+            onChange={(e) => setPresentRoom(e.target.value)}
+            style={{ marginRight: '1rem', padding: '0.5rem' }}
           />
+
+          {/* Old Hostel */}
+          <select
+            value={hostel}
+            onChange={(e) => setHostel(e.target.value)}
+            style={{ padding: '0.5rem', marginRight: '1rem' }}
+          >
+            <option value="">Old Hostel</option>
+            <option value="Saveri Hostel">Saveri Hostel</option>
+            <option value="Malhar Hostel">Malhar Hostel</option>
+          </select>
+
+          {/* Old Floor */}
+          <select
+            value={oldFloor}
+            onChange={(e) => setOldFloor(e.target.value)}
+            style={{ padding: '0.5rem' }}
+          >
+            <option value="">Old Floor</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
-          {preferences.map((pref, idx) => (
-            <input
-              key={idx}
-              type="text"
-              readOnly
-              value={pref}
-              placeholder={`Preference ${idx + 1}`}
-              onClick={() => handlePreferenceClick(idx)}
-              style={{
-                width: '120px',
-                padding: '0.5rem',
-                cursor: 'pointer',
-                border: selectedPreferenceIndex === idx ? '2px solid crimson' : '1px solid #ccc',
-                backgroundColor: '#fff',
-                textAlign: 'center',
-              }}
-            />
+        {/* Preferences (floor + room side-by-side) */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+            marginBottom: "1rem",
+            alignItems: "center",
+          }}
+        >
+          {floors.map((floor, idx) => (
+            <div key={idx} style={{ display: "flex", gap: "0.5rem" }}>
+              <select
+                value={floor}
+                onChange={(e) => {
+                  const newFloors = [...floors];
+                  const newPrefs = [...preferences];
+                  newFloors[idx] = e.target.value;
+
+                  if (e.target.value === "same") {
+                    newPrefs[idx] = presentRoom;
+                  } else {
+                    if (newPrefs[idx] === presentRoom) newPrefs[idx] = "";
+                  }
+
+                  setFloors(newFloors);
+                  setPreferences(newPrefs);
+                }}
+                style={{ padding: "0.5rem" }}
+              >
+                <option value="">Select Floor</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="same">Same Room</option>
+              </select>
+
+              <input
+                type="text"
+                readOnly
+                value={preferences[idx]}
+                placeholder={`Preference ${idx + 1}`}
+                onClick={() => floor !== "same" ? handlePreferenceClick(idx) : null}
+                disabled={floor === "same"}
+                style={{
+                  width: "120px",
+                  padding: "0.5rem",
+                  cursor: floor === "same" ? "not-allowed" : "pointer",
+                  border:
+                    selectedPreferenceIndex === idx
+                      ? "2px solid crimson"
+                      : "1px solid #ccc",
+                  textAlign: "center",
+                  backgroundColor: floor === "same" ? "#f0f0f0" : "#fff",
+                }}
+              />
+            </div>
           ))}
         </div>
 
-        {/* ✅ Buttons */}
+        {/* Buttons */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
           <button
             type="submit"
@@ -161,12 +241,11 @@ export default function Men() {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontWeight: 'bold',
+              fontWeight: 'bold'
             }}
           >
             Submit
           </button>
-
           <button
             type="button"
             onClick={() => navigate("/first")}
@@ -177,7 +256,7 @@ export default function Men() {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontWeight: 'bold',
+              fontWeight: 'bold'
             }}
           >
             Back
