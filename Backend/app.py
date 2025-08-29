@@ -1,5 +1,3 @@
-
-
 import openpyxl
 import importlib.util
 import sys
@@ -9,22 +7,28 @@ import os
 excel_path = "hostel_data.xlsx"
 rooms_file = "rooms.py"
 
-# Check files exist
+# --- Check if files exist ---
 if not os.path.exists(excel_path):
     raise FileNotFoundError(f"❌ Excel file not found: {excel_path}")
 if not os.path.exists(rooms_file):
     raise FileNotFoundError(f"❌ Rooms file not found: {rooms_file}")
 
-# --- Load hostel_data.xlsx ---
+# --- Load Excel ---
 wb = openpyxl.load_workbook(excel_path)
 sheet = wb.active   # first sheet (with student data)
 
-# Create fresh "final allocation" sheet
-if "final allocation" in wb.sheetnames:
-    ws_final = wb["final allocation"]
-    wb.remove(ws_final)
-ws_final = wb.create_sheet("final allocation")
-ws_final.append(["Email ID", "Allocated Room"])
+# Remove old allocation sheets if exist
+for sname in ["women allocation", "men allocation"]:
+    if sname in wb.sheetnames:
+        ws = wb[sname]
+        wb.remove(ws)
+
+# Create fresh allocation sheets
+ws_women = wb.create_sheet("women allocation")
+ws_men = wb.create_sheet("men allocation")
+
+ws_women.append(["Gender", "Email ID", "Allocated Room"])
+ws_men.append(["Gender", "Email ID", "Allocated Room"])
 
 # --- Load rooms.py dynamically ---
 spec = importlib.util.spec_from_file_location("rooms", rooms_file)
@@ -32,77 +36,183 @@ rooms = importlib.util.module_from_spec(spec)
 sys.modules["rooms"] = rooms
 spec.loader.exec_module(rooms)
 
-# Map Excel preferences to rooms.py variables
-pref_map = {
-    "MF": "SM",   # Malhar-facing → SM
-    "AF": "SA"    # Acad-facing → SA
+# ----------------------------------------------------------
+# ✅ Separate blocks for Women & Men
+# ----------------------------------------------------------
+WOMEN_BLOCKS = {
+    "MF": "MF",      # Malhar-facing
+    "AF": "AF",      # Acad-facing
+    "FF": "FF",      # Forest-facing
+    "HF": "HF"       # Hill-facing
 }
 
-# Helper function to allocate
-def allocate_room(pref_code, floor_num):
-    """Try to allocate first free room in given preference+floor"""
-    if pref_code not in pref_map:
+MEN_BLOCKS = {
+    "SMS": "SMS",
+    "SOS": "SOS",
+    "SKS": "SKS",
+    "SAS": "SAS",
+    "MF1S": "MF1S",
+    "MF2S": "MF2S",
+    "MBS": "MBS"
+}
+
+# ----------------------------------------------------------
+# ✅ Allocation function (handles gender)
+# ----------------------------------------------------------
+def allocate_room(gender, pref_code, floor_num):
+    """Allocate first free room based on gender, block preference and floor."""
+    block_map = WOMEN_BLOCKS if gender.lower() == "women" else MEN_BLOCKS
+
+    if pref_code not in block_map:
         return None
-    block_name = pref_map[pref_code]
+
+    block_name = block_map[pref_code]
     block = getattr(rooms, block_name, None)
     if not block:
         return None
 
     try:
-        floor_idx = int(floor_num) - 1  # floor1=1 → index=0
+        floor_idx = int(floor_num) - 1  # Convert floor number to index
     except Exception:
         return None
 
     if floor_idx < 0 or floor_idx >= len(block):
         return None
 
+    # Find first unallocated room
     for room in block[floor_idx]:
-        if room[1] == 0:        # available
+        if room[1] == 0:
             room[1] = 1
-            return room[0]      # return room number
+            return room[0]
     return None
 
-# --- Go through students FIFO ---
+# ----------------------------------------------------------
+# ✅ Allocation loop (writes into correct sheet)
+# ----------------------------------------------------------
 for row in sheet.iter_rows(min_row=2, values_only=True):
     if not row or not row[0]:
         continue
 
-    email = row[0]
-    floor1, pref1, floor2, pref2, floor3, pref3 = row[3:9]
+    gender = row[0]   # "Women" or "Men"
+    email = row[1]
+
+    # ⚠ Adjust indices depending on your Excel format
+    floor1, pref1, floor2, pref2, floor3, pref3 = row[5:11]
 
     allocated = None
     if pref1 and floor1:
-        allocated = allocate_room(str(pref1).strip(), floor1)
+        allocated = allocate_room(gender, str(pref1).strip(), floor1)
     if not allocated and pref2 and floor2:
-        allocated = allocate_room(str(pref2).strip(), floor2)
+        allocated = allocate_room(gender, str(pref2).strip(), floor2)
     if not allocated and pref3 and floor3:
-        allocated = allocate_room(str(pref3).strip(), floor3)
+        allocated = allocate_room(gender, str(pref3).strip(), floor3)
 
-    ws_final.append([email, allocated if allocated else "Not Allocated"])
+    # Write into separate sheets
+    if gender.lower() == "women":
+        ws_women.append([gender, email, allocated if allocated else "Not Allocated"])
+    else:
+        ws_men.append([gender, email, allocated if allocated else "Not Allocated"])
 
 # Save updated Excel
 wb.save(excel_path)
 
-# --- Update rooms.py with new allocations ---
-all_rooms = []
-for block_name in ["SM", "SA"]:
-    block = getattr(rooms, block_name)
-    for floor in block:
-        for room in floor:
-            all_rooms.append(room)
-
-with open(rooms_file, "r") as f:
-    code = f.read()
-
-updated_code = []
-for line in code.splitlines():
-    if "[[" in line:  # line with rooms
-        for room in all_rooms:
-            line = line.replace(f"[{room[0]}, 0]", f"[{room[0]}, {room[1]}]")
-            line = line.replace(f"[{room[0]}, 1]", f"[{room[0]}, {room[1]}]")
-    updated_code.append(line)
-
+# ----------------------------------------------------------
+# ✅ Overwrite rooms.py with updated allocations
+# ----------------------------------------------------------
 with open(rooms_file, "w") as f:
-    f.write("\n".join(updated_code))
+    f.write("#Women\n")
+    f.write("# Savari Malhar Facing (AM)\n")
+    f.write(f"MF = {rooms.MF}\n\n")
 
-print("✅ Allocation completed with 3 preferences. Excel + rooms.py updated.")
+    f.write("# Saveri Acad-facing rooms (SA)\n")
+    f.write(f"AF = {rooms.AF}\n\n")
+
+    f.write("#Malhar Forest Facing (FF)\n")
+    f.write(f"FF = {rooms.FF}\n\n")
+
+    f.write("#Malhar Hill Facing (HF)\n")
+    f.write(f"HF = {rooms.HF}\n\n")
+
+    f.write("\n\n#MEN\n")
+    f.write("#Savari Malhar Side (SMS)\n")
+    f.write(f"SMS = {rooms.SMS}\n\n")
+
+    f.write("#Saveri Opean Side (SOS)\n")
+    f.write(f"SOS = {rooms.SOS}\n\n")
+
+    f.write("#Saveri kadaram side (SKS)\n")
+    f.write(f"SKS = {rooms.SKS}\n\n")
+
+    f.write("#Saveri ACad Side (SAS)\n")
+    f.write(f"SAS = {rooms.SAS}\n\n")
+
+    f.write("#Mahlar Forest 1 side (MF1S)\n")
+    f.write(f"MF1S = {rooms.MF1S}\n\n")
+
+    f.write("#Malhar Forest 2 Side (MF2S)\n")
+    f.write(f"MF2S = {rooms.MF2S}\n\n")
+
+    f.write("#Malhar BasketBall Court Side\n")
+    f.write(f"MBS = {rooms.MBS}\n\n")
+
+    # ✅ Keep print_allocation() in rooms.py
+    f.write("""
+def print_allocation():
+    print("\\n--- Room Allocation Status ---")
+    print("Choose option:")
+    print("1 → Show both Allocated & Unallocated")
+    print("2 → Show only Allocated")
+    print("3 → Show only Unallocated")
+
+    choice = input("Enter 1, 2, or 3: ").strip()
+
+    blocks = {
+        "MF": MF,
+        "AF": AF,
+        "FF": FF,
+        "HF": HF,
+        "SMS": SMS,
+        "SOS": SOS,
+        "SKS": SKS,
+        "SAS": SAS,
+        "MF1S": MF1S,
+        "MF2S": MF2S,
+        "MBS": MBS,
+    }
+
+    for block_name, block in blocks.items():
+        print(f"\\nBlock {block_name}:")
+        for floor_idx, floor in enumerate(block):
+            if floor_idx == 0:
+                floor_name = "0th"
+            elif floor_idx == 1:
+                floor_name = "1st"
+            elif floor_idx == 2:
+                floor_name = "2nd"
+            elif floor_idx == 3:
+                floor_name = "3rd"
+            else:
+                floor_name = f"{floor_idx}th"
+
+            allocated = [room[0] for room in floor if room[1] == 1]
+            unallocated = [room[0] for room in floor if room[1] == 0]
+
+            print(f"  Floor {floor_name} floor:")
+
+            if choice == "1":  # both
+                print(f"    Allocated   : {allocated if allocated else 'None'}")
+                print(f"    Unallocated : {unallocated if unallocated else 'None'}")
+            elif choice == "2":  # only allocated
+                print(f"    Allocated   : {allocated if allocated else 'None'}")
+            elif choice == "3":  # only unallocated
+                print(f"    Unallocated : {unallocated if unallocated else 'None'}")
+            else:
+                print("    Invalid choice! Showing both by default.")
+                print(f"    Allocated   : {allocated if allocated else 'None'}")
+                print(f"    Unallocated : {unallocated if unallocated else 'None'}")
+
+if __name__ == "__main__":
+    print_allocation()
+""")
+
+print("✅ Allocation completed. Results saved in Excel + rooms.py updated.")

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/Store';
-import img from "../Women/plan.jpeg";
+import img from "../Men/Plan.jpeg";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -18,12 +18,16 @@ export default function Home() {
 
   // rooms with custom size/shape
   const rooms = [
-    { number: 'MF', top: '31%', left: '46%', width: '50px', height: '190px', borderRadius: '10px' },
-    { number: 'AF', top: '23%', left: '92%', width: '50px', height: '80px', borderRadius: '10px' },
-    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  
-    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, 
-    // Write here to add more buttons
+    { number: 'SMS', top: '61%', left: '60%', width: '40px', height: '50px', borderRadius: '10px' },
+    { number: 'SOS', top: '78%', left: '60%', width: '40px', height: '60px', borderRadius: '10px' },
+    { number: 'SKS', top: '94%', left: '71%', width: '60px', height: '35px', borderRadius: '10%' },  
+    { number: 'SAS', top: '78%', left: '87%', width: '40px', height: '65px', borderRadius: '10px' }, 
+    { number: 'MF1S', top: '50%', left: '23%', width: '75px', height: '40px', borderRadius: '10px' },
+    { number: 'MF2S', top: '77%', left: '4%', width: '40px', height: '50px', borderRadius: '10px' },
+    { number: 'MBS', top: '94%', left: '19.5%', width: '130px', height: '37px', borderRadius: '10px'},
+    // WRITE HERE TO ADD MORE BUTTONS
   ];
+  
 
   function handleRoomClick(roomNum) {
     const newPrefs = [...preferences];
@@ -93,7 +97,7 @@ export default function Home() {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-      <h1>MEN</h1>
+      {/* <h1>MEN</h1> */}
 
       <form onSubmit={handleSubmit}>
         {/* Image + room selection */}
@@ -113,7 +117,7 @@ export default function Home() {
                 top: room.top,
                 left: room.left,
                 transform: 'translate(-50%, -50%)',
-                backgroundColor: 'rgba(202, 193, 194, 0.36)',
+                backgroundColor: 'rgba(201, 45, 63, 0.36)',
                 border: preferences[selectedPreferenceIndex] === room.number
                   ? '2px solid #fff'
                   : 'none',
