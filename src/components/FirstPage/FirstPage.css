@@ -1,0 +1,100 @@
+/* Full page container */
+.firstpage-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Navbar background */
+  .navbar {
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  
+    display: flex;
+    justify-content: center;   /* center the navbar block */
+    align-items: center;
+    padding: 0.8rem 2rem;
+  }
+  
+  /* Centered container with max-width */
+  .navbar-container {
+    max-width: 1200px;         /* ✅ keeps it balanced like IITPKD */
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* logo on left, links on right */
+    align-items: center;
+  }
+  
+  /* Left side: logo + brand */
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  .navbar-logo {
+    height: 45px;
+    width: auto;
+  }
+  
+  .navbar-brand {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #dc143c;
+  }
+  
+  /* Right side: links */
+  .navbar-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar-links li a {
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
+  }
+  
+  .navbar-links li a:hover {
+    color: #dc143c;
+  }
+  
+  /* Centered page content */
+  .page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .page-content h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+  
+  /* END button */
+  .end-btn {
+    padding: 0.7rem 2rem;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .end-btn:hover {
+    background-color: #333;
+  }
+  

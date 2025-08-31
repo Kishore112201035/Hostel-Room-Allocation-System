@@ -1,156 +1,50 @@
-// // src/components/FirstPage.jsx
-// import React, { useState } from "react";
-// import { Link } from "react-router-dom";
-// import useStore from "../store/Store";
-
-// export default function FirstPage() {
-//   const userEmail = useStore((state) => state.userEmail);
-//   const [menuOpen, setMenuOpen] = useState(false);
-
-//   return (
-//     <div style={{ textAlign: "center", marginTop: "2rem" }}>
-//       <h1>Welcome {userEmail} 🎉</h1>
-
-//       {/* 3-line Menu Button */}
-//       <button
-//         onClick={() => setMenuOpen(!menuOpen)}
-//         style={{
-//           position: "absolute",
-//           top: "20px",
-//           left: "20px",
-//           background: "transparent",
-//           border: "none",
-//           cursor: "pointer",
-//         }}
-//       >
-//         <div style={{ width: "25px", height: "3px", background: "#dc143c", margin: "4px 0" }}></div>
-//         <div style={{ width: "25px", height: "3px", background: "#dc143c", margin: "4px 0" }}></div>
-//         <div style={{ width: "25px", height: "3px", background: "#dc143c", margin: "4px 0" }}></div>
-//       </button>
-
-//       {/* Menu */}
-//       {menuOpen && (
-//         <div
-//           style={{
-//             position: "absolute",
-//             top: "60px",
-//             left: "0",
-//             width: "200px",
-//             background: "#dc143c",
-//             padding: "1rem",
-//             borderRadius: "0 8px 8px 0",
-//             color: "white",
-//             textAlign: "left",
-//           }}
-//         >
-//           <p>
-//             <Link to="/home" style={{ color: "white", textDecoration: "none" }}>
-//               WOMEN
-//             </Link>
-//           </p>
-//           <p>
-//             <span style={{ color: "#ccc" }}>Empty</span>
-//           </p>
-//           <p>
-//             <Link to="/emailcheck" style={{ color: "white", textDecoration: "none" }}>
-//               Check
-//             </Link>
-//           </p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-
-
-// src/components/FirstPage.jsx
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import useStore from "../store/Store";
+import "./FirstPage.css";
+// import iitpkdLogo from "../assets/iitpkdLogo.jpeg"; // ✅ make sure logo is in src/assets/
 
 export default function FirstPage() {
   const userEmail = useStore((state) => state.userEmail);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   function handleEnd() {
-    // Try to close window
-    window.open("about:blank", "_self"); 
+    window.open("about:blank", "_self");
     window.close();
   }
 
   return (
-    <div style={{ textAlign: "center", marginTop: "2rem" }}>
-      <h1>Welcome {userEmail} 🎉</h1>
+    <div className="firstpage-container">
+      {/* 🔹 Top Navbar */}
+      <nav className="navbar">
+        <div className="navbar-container">
+          {/* Left side: logo + brand */}
+          <div className="navbar-left">
+            {/* <img src={iitpkdLogo} alt="Logo" className="navbar-logo" /> */}
+            <span className="navbar-brand">My App</span>
+          </div>
 
-      {/* 3-line Menu Button */}
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "20px",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        <div style={{ width: "25px", height: "3px", background: "#dc143c", margin: "4px 0" }}></div>
-        <div style={{ width: "25px", height: "3px", background: "#dc143c", margin: "4px 0" }}></div>
-        <div style={{ width: "25px", height: "3px", background: "#dc143c", margin: "4px 0" }}></div>
-      </button>
-
-      {/* Menu */}
-      {menuOpen && (
-        <div
-          style={{
-            position: "absolute",
-            top: "60px",
-            left: "0",
-            width: "200px",
-            background: "#dc143c",
-            padding: "1rem",
-            borderRadius: "0 8px 8px 0",
-            color: "white",
-            textAlign: "left",
-          }}
-        >
-          <p>
-            <Link to="/women" style={{ color: "white", textDecoration: "none" }}>
-              WOMEN
-            </Link>
-          </p>
-          <p>
-            <Link to="/men" style={{ color: "white", textDecoration: "none" }}>
-              MEN
-            </Link>
-          </p>
-          <p>
-            <Link to="/emailcheck" style={{ color: "white", textDecoration: "none" }}>
-              Check
-            </Link>
-          </p>
+          {/* Right side: menu links */}
+          <ul className="navbar-links">
+            <li>
+              <Link to="/women">Women</Link>
+            </li>
+            <li>
+              <Link to="/men">Men</Link>
+            </li>
+            <li>
+              <Link to="/emailcheck">Check</Link>
+            </li>
+          </ul>
         </div>
-      )}
+      </nav>
 
-      {/* ✅ END Button */}
-      <div style={{ marginTop: "3rem" }}>
-        <button
-          onClick={handleEnd}
-          style={{
-            padding: "0.7rem 2rem",
-            backgroundColor: "black",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
+      {/* 🔹 Centered Page Content */}
+      <div className="page-content">
+        <h1>Welcome {userEmail} 🎉</h1>
+        <button className="end-btn" onClick={handleEnd}>
           END
         </button>
       </div>
     </div>
   );
 }
-
