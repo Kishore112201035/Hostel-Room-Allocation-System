@@ -91,4 +91,5 @@ def print_allocation():
                 print(f"    Unallocated : {unallocated if unallocated else 'None'}")
 
 if __name__ == "__main__":
-    print_allocation()
+    # print_allocation()
+    pass

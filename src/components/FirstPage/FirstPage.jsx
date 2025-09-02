@@ -34,6 +34,10 @@ export default function FirstPage() {
             <li>
               <Link to="/emailcheck">Check</Link>
             </li>
+            <li>
+              <Link to="/rooms">Available Rooms</Link>
+            </li>
+
           </ul>
         </div>
       </nav>
