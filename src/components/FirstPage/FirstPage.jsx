@@ -37,17 +37,18 @@ export default function FirstPage() {
             <li>
               <Link to="/rooms">Available Rooms</Link>
             </li>
-
           </ul>
         </div>
       </nav>
 
       {/* 🔹 Centered Page Content */}
       <div className="page-content">
-        <h1>Welcome {userEmail} 🎉</h1>
-        <button className="end-btn" onClick={handleEnd}>
-          END
-        </button>
+        <div className="page-box">
+          <h1>Welcome {userEmail} 🎉</h1>
+          <button className="end-btn" onClick={handleEnd}>
+            END
+          </button>
+        </div>
       </div>
     </div>
   );

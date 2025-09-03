@@ -5,7 +5,7 @@ import Women from './components/Women/Women';        // ✅ Women page
 import Men from './components/Men/Men';                  // ✅ Men page
 import EmailCheck from './components/Check/EmailCheck';
 import FirstPage from './components/FirstPage/FirstPage';
-import Rooms from './components/Rooms/Rooms';  // ✅ Import Rooms
+import Rooms from './components/Rooms/AvailableRooms';  // ✅ Import Rooms
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 const GoogleClientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;

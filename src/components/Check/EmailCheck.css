@@ -1,0 +1,98 @@
+/* Full page center */
+.emailcheck-container {
+    height: 100vh;
+    width: 100vw;
+    background: hsl(31, 100%, 90%); /* soft peach background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* White box */
+  .emailcheck-box {
+    background: #ffffff;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    min-width: 350px;
+    max-width: 600px;
+    width: 90%;
+  }
+  
+  /* Title */
+  .emailcheck-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #222;
+  }
+  
+  /* Form */
+  .emailcheck-form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .email-input {
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 250px;
+  }
+  
+  .submit-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: #dc143c; /* crimson */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: #a10f2d;
+  }
+  
+  /* Result section */
+  .emailcheck-result {
+    margin-top: 1rem;
+    text-align: left;
+  }
+  
+  .error-text {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .result-box {
+    background: #fafafa;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  /* Back button */
+  .button-group {
+    margin-top: 1.5rem;
+  }
+  
+  .back-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+  
+  .back-btn:hover {
+    background-color: #444;
+  }
+  

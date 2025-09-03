@@ -1,100 +1,112 @@
 /* Full page container */
 .firstpage-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Navbar background */
-  .navbar {
-    background: white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  
-    display: flex;
-    justify-content: center;   /* center the navbar block */
-    align-items: center;
-    padding: 0.8rem 2rem;
-  }
-  
-  /* Centered container with max-width */
-  .navbar-container {
-    max-width: 1200px;         /* ✅ keeps it balanced like IITPKD */
-    width: 100%;
-    display: flex;
-    justify-content: space-between; /* logo on left, links on right */
-    align-items: center;
-  }
-  
-  /* Left side: logo + brand */
-  .navbar-left {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  
-  .navbar-logo {
-    height: 45px;
-    width: auto;
-  }
-  
-  .navbar-brand {
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #dc143c;
-  }
-  
-  /* Right side: links */
-  .navbar-links {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .navbar-links li a {
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
-    transition: color 0.2s;
-  }
-  
-  .navbar-links li a:hover {
-    color: #dc143c;
-  }
-  
-  /* Centered page content */
-  .page-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .page-content h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 2rem;
-  }
-  
-  /* END button */
-  .end-btn {
-    padding: 0.7rem 2rem;
-    background-color: black;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .end-btn:hover {
-    background-color: #333;
-  }
-  
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: hsl(31, 100%, 90%); /* light peach background */
+}
+
+/* Navbar background */
+.navbar {
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  display: flex;
+  justify-content: center;   
+  align-items: center;
+  padding: 0.8rem 2rem;
+}
+
+/* Centered container with max-width */
+.navbar-container {
+  max-width: 1200px;         
+  width: 100%;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+}
+
+/* Left side: logo + brand */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.navbar-logo {
+  height: 45px;
+  width: auto;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #dc143c;
+}
+
+/* Right side: links */
+.navbar-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li a {
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  transition: color 0.2s;
+}
+
+.navbar-links li a:hover {
+  color: #dc143c;
+}
+
+/* Centered page content (white box in middle) */
+.page-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;  /* horizontal center */
+  align-items: center;      /* vertical center */
+}
+
+/* The actual content box */
+.page-box {
+  background: #fff;
+  border: 1px solid #ddd;          
+  border-radius: 10px;             
+  padding: 2rem 3rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+/* Title */
+.page-box h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+/* END button */
+.end-btn {
+  padding: 0.7rem 2rem;
+  background-color: #dc143c; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.end-btn:hover {
+  background-color: #a10f2d; 
+}
