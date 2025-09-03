@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useStore from "../store/Store";
 import "./FirstPage.css";
 
 export default function FirstPage() {
   const userEmail = useStore((state) => state.userEmail);
+  const navigate = useNavigate();
 
   const images = [
     "/HostelSahyadri.jpg",
@@ -41,13 +42,23 @@ export default function FirstPage() {
     window.close();
   }
 
+  function handleLogoClick() {
+    navigate("/first"); // ✅ clicking logo brings back to home
+  }
+
   return (
     <div className="firstpage-container">
       {/* Navbar */}
       <nav className="navbar">
         <div className="navbar-container">
           <div className="navbar-left">
-            <span className="navbar-brand">My App</span>
+            {/* ✅ Logo instead of "My App" */}
+            <img
+              src="/logo.png"   // make sure logo.png is inside /public
+              alt="App Logo"
+              className="navbar-logo"
+              onClick={handleLogoClick}
+            />
           </div>
           <ul className="navbar-links">
             <li><Link to="/women">Women</Link></li>
