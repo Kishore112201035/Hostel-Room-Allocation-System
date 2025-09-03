@@ -4,51 +4,46 @@
   width: 100vw;
   display: flex;
   flex-direction: column;
-  background: hsl(31, 100%, 90%); /* light peach background */
+  background: white; /* 🔹 Whole page white */
 }
 
-/* Navbar background */
 .navbar {
-  background: white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: rgb(247, 246, 245);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
   z-index: 100;
 
+  width: 1200px;       /* 🔹 restrict width */
+  height: 70px;        /* keep consistent height */
+  margin: 0 auto;      /* 🔹 center the bar */
+  
   display: flex;
-  justify-content: center;   
+  justify-content: center;
   align-items: center;
   padding: 0.8rem 2rem;
 }
 
-/* Centered container with max-width */
 .navbar-container {
-  max-width: 1200px;         
   width: 100%;
+  max-width: 1200px;         
   display: flex;
   justify-content: space-between; 
   align-items: center;
 }
 
-/* Left side: logo + brand */
 .navbar-left {
   display: flex;
   align-items: center;
   gap: 0.6rem;
 }
 
-.navbar-logo {
-  height: 45px;
-  width: auto;
-}
-
 .navbar-brand {
   font-weight: bold;
   font-size: 1.2rem;
-  color: #dc143c;
+  color: #F7AF1D;
 }
 
-/* Right side: links */
 .navbar-links {
   display: flex;
   list-style: none;
@@ -66,18 +61,82 @@
 }
 
 .navbar-links li a:hover {
-  color: #dc143c;
+  color: #F7AF1D;
 }
 
-/* Centered page content (white box in middle) */
+/* Center alignment */
 .page-content {
   flex: 1;
   display: flex;
-  justify-content: center;  /* horizontal center */
-  align-items: center;      /* vertical center */
+  justify-content: center;
+  align-items: center;
+  background: white;
 }
 
-/* The actual content box */
+/* Wrapper */
+.peach-wrapper {
+  background: #fff;
+  padding: 3rem 5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Slideshow container */
+.slideshow {
+  width: 1100px;
+  height: 600px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #eee;
+  position: relative;  /* ✅ dots inside */
+}
+
+/* Track keeps moving */
+.slideshow-track {
+  display: flex;
+  height: 100%;
+}
+
+/* Each image */
+.slideshow img {
+  width: 1100px;
+  height: 600px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Dot indicators - stay INSIDE slideshow */
+.slideshow-dots {
+  position: absolute;   /* ✅ now overlays images */
+  bottom: 15px;         
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 10; /* ✅ ensures above images */
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  transition: background-color 0.4s;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.dot.active {
+  background-color: #F7AF1D;
+}
+
+/* Actual content box */
 .page-box {
   background: #fff;
   border: 1px solid #ddd;          
@@ -85,9 +144,15 @@
   padding: 2rem 3rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   text-align: center;
+
+  min-height: 100px;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-/* Title */
+
 .page-box h1 {
   font-size: 2rem;
   font-weight: bold;
@@ -95,18 +160,17 @@
   color: #333;
 }
 
-/* END button */
 .end-btn {
-  padding: 0.7rem 2rem;
-  background-color: #dc143c; 
+  padding: 0.7rem 0rem;
+  background-color: #F7AF1D; 
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
   transition: background 0.3s ease;
 }
 
 .end-btn:hover {
-  background-color: #a10f2d; 
+  background-color: #F7AF1D; 
 }
