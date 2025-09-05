@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/Store';
 import img from "../Women/plan.jpeg";
+import "./Women.css";   // <-- CSS file
 
 export default function Home() {
   const navigate = useNavigate();
   const userEmail = useStore((state) => state.userEmail);
 
-  // floor selections and room selections
   const [floors, setFloors] = useState(['', '', '']);
   const [preferences, setPreferences] = useState(['', '', '']);
   const [selectedPreferenceIndex, setSelectedPreferenceIndex] = useState(0);
@@ -16,13 +16,11 @@ export default function Home() {
   const [hostel, setHostel] = useState('');
   const [oldFloor, setOldFloor] = useState('');
 
-  // rooms with custom size/shape
   const rooms = [
     { number: 'MF', top: '31%', left: '46%', width: '50px', height: '190px', borderRadius: '10px' },
     { number: 'AF', top: '23%', left: '92%', width: '50px', height: '80px', borderRadius: '10px' },
     { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  
     { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, 
-    // Write here to add more buttons
   ];
 
   function handleRoomClick(roomNum) {
@@ -49,7 +47,6 @@ export default function Home() {
       return;
     }
 
-    // prepare final values
     const finalFloors = [...floors];
     const finalPrefs = [...preferences];
 
@@ -92,177 +89,107 @@ export default function Home() {
   }
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-      <h1>WOMEN</h1>
+    <div className="home-container">
+      <div className="home-card">
+        <h1 className="title">WOMEN</h1>
 
-      <form onSubmit={handleSubmit}>
-        {/* Image + room selection */}
-        <div style={{ position: 'relative', display: 'inline-block', marginBottom: '2rem' }}>
-          <img
-            src={img}
-            alt="Rooms"
-            style={{ width: '800px', height: 'auto', border: '1px solid #ccc' }}
-          />
-          {rooms.map((room) => (
-            <button
-              type="button"
-              key={room.number}
-              onClick={() => handleRoomClick(room.number)}
-              style={{
-                position: 'absolute',
-                top: room.top,
-                left: room.left,
-                transform: 'translate(-50%, -50%)',
-                backgroundColor: 'rgba(202, 193, 194, 0.36)',
-                border: preferences[selectedPreferenceIndex] === room.number
-                  ? '2px solid #fff'
-                  : 'none',
-                width: room.width,
-                height: room.height,
-                borderRadius: room.borderRadius,
-                color: 'white',
-                cursor: 'pointer',
-                userSelect: 'none',
-              }}
-            >
-              {room.number}
-            </button>
-          ))}
-        </div>
-
-        {/* User info */}
-        <div style={{ marginBottom: '1rem' }}>
-          <input
-            type="text"
-            value={userEmail}
-            readOnly
-            style={{ marginRight: '1rem', padding: '0.5rem', backgroundColor: '#eee' }}
-          />
-          <input
-            type="text"
-            placeholder="Present Room No."
-            value={presentRoom}
-            onChange={(e) => setPresentRoom(e.target.value)}
-            style={{ marginRight: '1rem', padding: '0.5rem' }}
-          />
-
-          {/* Old Hostel */}
-          <select
-            value={hostel}
-            onChange={(e) => setHostel(e.target.value)}
-            style={{ padding: '0.5rem', marginRight: '1rem' }}
-          >
-            <option value="">Old Hostel</option>
-            <option value="Saveri Hostel">Saveri Hostel</option>
-            <option value="Malhar Hostel">Malhar Hostel</option>
-          </select>
-
-          {/* Old Floor */}
-          <select
-            value={oldFloor}
-            onChange={(e) => setOldFloor(e.target.value)}
-            style={{ padding: '0.5rem' }}
-          >
-            <option value="">Old Floor</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
-        </div>
-
-        {/* Preferences (floor + room side-by-side) */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            marginBottom: "1rem",
-            alignItems: "center",
-          }}
-        >
-          {floors.map((floor, idx) => (
-            <div key={idx} style={{ display: "flex", gap: "0.5rem" }}>
-              <select
-                value={floor}
-                onChange={(e) => {
-                  const newFloors = [...floors];
-                  const newPrefs = [...preferences];
-                  newFloors[idx] = e.target.value;
-
-                  if (e.target.value === "same") {
-                    newPrefs[idx] = presentRoom;
-                  } else {
-                    if (newPrefs[idx] === presentRoom) newPrefs[idx] = "";
-                  }
-
-                  setFloors(newFloors);
-                  setPreferences(newPrefs);
-                }}
-                style={{ padding: "0.5rem" }}
-              >
-                <option value="">Select Floor</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="same">Same Room</option>
-              </select>
-
-              <input
-                type="text"
-                readOnly
-                value={preferences[idx]}
-                placeholder={`Preference ${idx + 1}`}
-                onClick={() => floor !== "same" ? handlePreferenceClick(idx) : null}
-                disabled={floor === "same"}
+        <form onSubmit={handleSubmit}>
+          {/* Image + room selection */}
+          <div className="image-container">
+            <img src={img} alt="Rooms" className="room-image" />
+            {rooms.map((room) => (
+              <button
+                type="button"
+                key={room.number}
+                onClick={() => handleRoomClick(room.number)}
+                className={`room-btn ${preferences[selectedPreferenceIndex] === room.number ? "selected" : ""}`}
                 style={{
-                  width: "120px",
-                  padding: "0.5rem",
-                  cursor: floor === "same" ? "not-allowed" : "pointer",
-                  border:
-                    selectedPreferenceIndex === idx
-                      ? "2px solid crimson"
-                      : "1px solid #ccc",
-                  textAlign: "center",
-                  backgroundColor: floor === "same" ? "#f0f0f0" : "#fff",
+                  top: room.top,
+                  left: room.left,
+                  width: room.width,
+                  height: room.height,
+                  borderRadius: room.borderRadius
                 }}
-              />
-            </div>
-          ))}
-        </div>
+              >
+                {room.number}
+              </button>
+            ))}
+          </div>
 
-        {/* Buttons */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-          <button
-            type="submit"
-            style={{
-              padding: '0.7rem 2rem',
-              backgroundColor: '#dc143c',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            Submit
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate("/first")}
-            style={{
-              padding: '0.7rem 2rem',
-              backgroundColor: 'gray',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            Back
-          </button>
-        </div>
-      </form>
+          {/* User info */}
+          <div className="input-row">
+            <input type="text" value={userEmail} readOnly className="readonly-input" />
+            <input
+              type="text"
+              placeholder="Present Room No."
+              value={presentRoom}
+              onChange={(e) => setPresentRoom(e.target.value)}
+              className="text-input"
+            />
+
+            <select value={hostel} onChange={(e) => setHostel(e.target.value)} className="select-input">
+              <option value="">Old Hostel</option>
+              <option value="Saveri Hostel">Saveri Hostel</option>
+              <option value="Malhar Hostel">Malhar Hostel</option>
+            </select>
+
+            <select value={oldFloor} onChange={(e) => setOldFloor(e.target.value)} className="select-input">
+              <option value="">Old Floor</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+
+          {/* Preferences */}
+          <div className="preferences">
+            {floors.map((floor, idx) => (
+              <div key={idx} className="pref-row">
+                <select
+                  value={floor}
+                  onChange={(e) => {
+                    const newFloors = [...floors];
+                    const newPrefs = [...preferences];
+                    newFloors[idx] = e.target.value;
+
+                    if (e.target.value === "same") {
+                      newPrefs[idx] = presentRoom;
+                    } else {
+                      if (newPrefs[idx] === presentRoom) newPrefs[idx] = "";
+                    }
+
+                    setFloors(newFloors);
+                    setPreferences(newPrefs);
+                  }}
+                  className="select-input"
+                >
+                  <option value="">Select Floor</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="same">Same Room</option>
+                </select>
+
+                <input
+                  type="text"
+                  readOnly
+                  value={preferences[idx]}
+                  placeholder={`Preference ${idx + 1}`}
+                  onClick={() => floor !== "same" ? handlePreferenceClick(idx) : null}
+                  disabled={floor === "same"}
+                  className={`pref-input ${selectedPreferenceIndex === idx ? "active" : ""} ${floor === "same" ? "disabled" : ""}`}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Buttons */}
+          <div className="button-row">
+            <button type="submit" className="submit-btn">Submit</button>
+            <button type="button" onClick={() => navigate("/first")} className="back-btn">Back</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

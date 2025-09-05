@@ -63,7 +63,7 @@ export default function FirstPage() {
           <ul className="navbar-links">
             <li><Link to="/women">Women</Link></li>
             <li><Link to="/men">Men</Link></li>
-            <li><Link to="/emailcheck">Check</Link></li>
+            <li><Link to="/emailcheck">Check Allocation</Link></li>
             <li><Link to="/rooms">Available Rooms</Link></li>
           </ul>
         </div>

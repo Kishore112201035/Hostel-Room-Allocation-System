@@ -97,7 +97,7 @@
   
   .blue-btn {
     padding: 10px 18px;
-    background-color: #007bff;
+    background-color: #F7AF1D;
     color: white;
     border: none;
     border-radius: 6px;
@@ -107,7 +107,7 @@
   }
   
   .blue-btn:hover {
-    background-color: #0056b3;
+    background-color: #F7AF1D;
   }
   
   /* Scrollbar Styling */
@@ -116,17 +116,17 @@
   }
   
   .results-box::-webkit-scrollbar-track {
-    background: #eee;
+    background: #F7AF1D;
     border-radius: 10px;
   }
   
   .results-box::-webkit-scrollbar-thumb {
-    background: #007bff;
+    background: #F7AF1D;
     border-radius: 10px;
   }
   
   .results-box::-webkit-scrollbar-thumb:hover {
-    background: #0056b3;
+    background: #F7AF1D;
   }
   
 
