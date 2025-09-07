@@ -8,8 +8,8 @@ export default function Home() {
   const navigate = useNavigate();
   const userEmail = useStore((state) => state.userEmail);
 
-  const [floors, setFloors] = useState(['', '', '']);
-  const [preferences, setPreferences] = useState(['', '', '']);
+  const [floors, setFloors] = useState(['', '', '', '', '']);   // ✅ now 5 floors
+  const [preferences, setPreferences] = useState(['', '', '', '', '']); // ✅ now 5 prefs
   const [selectedPreferenceIndex, setSelectedPreferenceIndex] = useState(0);
 
   const [presentRoom, setPresentRoom] = useState('');
@@ -33,6 +33,23 @@ export default function Home() {
 
   function handlePreferenceClick(index) {
     setSelectedPreferenceIndex(index);
+  }
+
+  // ✅ Random button logic
+  function handleRandomFill() {
+    const randomFloors = [];
+    const randomPrefs = [];
+    const roomNumbers = rooms.map(r => r.number);
+
+    for (let i = 0; i < 5; i++) {
+      const randFloor = Math.floor(Math.random() * 3) + 1; // floors 1–3
+      const randRoom = roomNumbers[Math.floor(Math.random() * roomNumbers.length)];
+      randomFloors.push(String(randFloor));
+      randomPrefs.push(randRoom);
+    }
+
+    setFloors(randomFloors);
+    setPreferences(randomPrefs);
   }
 
   async function handleSubmit(e) {
@@ -59,18 +76,20 @@ export default function Home() {
 
     const formBody = new URLSearchParams({
       Category: "Women",
-      Email: userEmail,
+      Email: userEmail,  // ✅ still sent but hidden
       PresentRoom: presentRoom,
       Hostel: hostel,
       OldFloor: oldFloor,
       Floor1: finalFloors[0], Pref1: finalPrefs[0],
       Floor2: finalFloors[1], Pref2: finalPrefs[1],
       Floor3: finalFloors[2], Pref3: finalPrefs[2],
+      Floor4: finalFloors[3], Pref4: finalPrefs[3],   // ✅ added
+      Floor5: finalFloors[4], Pref5: finalPrefs[4],   // ✅ added
     }).toString();
 
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbxS0dAeWtQFVcnmgozLOcaPjklISVHwUoX15eBZ_8EHJrGLcMYfq0J-k2nOp3ax0eA0/exec",
+        "https://script.google.com/macros/s/AKfycbz4YopyVrst8t54wmCd_xNSlxu73hI46uOWxp5XBvQQW6NS7N6eOr9YTfeNgTcNbQsW/exec",
         {
           method: 'POST',
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -118,7 +137,16 @@ export default function Home() {
 
           {/* User info */}
           <div className="input-row">
-            <input type="text" value={userEmail} readOnly className="readonly-input" />
+            {/* Replaced email with Random button */}
+            <button 
+              type="button" 
+              onClick={handleRandomFill} 
+              className="random-btn"
+              style={{ minWidth: "150px" }}
+            >
+              Random
+            </button>
+
             <input
               type="text"
               placeholder="Present Room No."

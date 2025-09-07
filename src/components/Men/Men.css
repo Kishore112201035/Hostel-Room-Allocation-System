@@ -119,4 +119,9 @@
     background: #F7AF1D;
     color: #fff;
   }
+  .btn.random {
+    background: #4CAF50;  /* green */
+    color: #fff;
+  }
+  
   
