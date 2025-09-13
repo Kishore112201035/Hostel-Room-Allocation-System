@@ -27,8 +27,8 @@ for sname in ["women allocation", "men allocation"]:
 ws_women = wb.create_sheet("women allocation")
 ws_men = wb.create_sheet("men allocation")
 
-ws_women.append(["Gender", "Email ID", "Allocated Room"])
-ws_men.append(["Gender", "Email ID", "Allocated Room"])
+ws_women.append(["Category", "Email ID", "Allocated Room"])
+ws_men.append(["Category", "Email ID", "Allocated Room"])
 
 # --- Load rooms.py dynamically ---
 spec = importlib.util.spec_from_file_location("rooms", rooms_file)
@@ -40,10 +40,12 @@ spec.loader.exec_module(rooms)
 # ✅ Separate blocks for Women & Men
 # ----------------------------------------------------------
 WOMEN_BLOCKS = {
-    "MF": "MF",      # Malhar-facing
-    "AF": "AF",      # Acad-facing
-    "FF": "FF",      # Forest-facing
-    "HF": "HF"       # Hill-facing
+    "AM": "MF",   # Acad Malhar → MF
+    "MF": "MF",   # direct code
+    "AF": "AF",   # Acad-facing
+    "FF": "FF",   # Forest-facing
+    "HF": "HF",   # Hill-facing
+    "SA": "AF"    # Saveri Acad → map to AF
 }
 
 MEN_BLOCKS = {
@@ -63,6 +65,7 @@ def allocate_room(gender, pref_code, floor_num):
     """Allocate first free room based on gender, block preference and floor."""
     block_map = WOMEN_BLOCKS if gender.lower() == "women" else MEN_BLOCKS
 
+    pref_code = str(pref_code).strip().upper()
     if pref_code not in block_map:
         return None
 
@@ -89,29 +92,41 @@ def allocate_room(gender, pref_code, floor_num):
 # ----------------------------------------------------------
 # ✅ Allocation loop (writes into correct sheet)
 # ----------------------------------------------------------
-for row in sheet.iter_rows(min_row=2, values_only=True):
-    if not row or not row[0]:
+for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=False), start=2):
+    if not row or not row[0].value:
         continue
 
-    gender = row[0]   # "Women" or "Men"
-    email = row[1]
-
-    # ⚠ Adjust indices depending on your Excel format
-    floor1, pref1, floor2, pref2, floor3, pref3 = row[5:11]
+    category = row[0].value   # ⚠️ "Category" instead of "Gender"
+    allocated_cell = row[1]   # ⚠️ "Allocated" column (to be updated)
+    email = row[2].value
 
     allocated = None
-    if pref1 and floor1:
-        allocated = allocate_room(gender, str(pref1).strip(), floor1)
-    if not allocated and pref2 and floor2:
-        allocated = allocate_room(gender, str(pref2).strip(), floor2)
-    if not allocated and pref3 and floor3:
-        allocated = allocate_room(gender, str(pref3).strip(), floor3)
+
+    # ------------------------------------------------------
+    # ✅ Loop through all (FLOORx, PREFx) pairs until blank
+    # Columns start at index 6 (FLOOR1) → then PREF1, etc.
+    # ------------------------------------------------------
+    col = 6
+    while col + 1 < len(row):
+        floor_val = row[col].value
+        pref_val = row[col + 1].value
+
+        if not pref_val or not floor_val:  # stop if blank
+            break  
+
+        if not allocated:  # only allocate if not already done
+            allocated = allocate_room(category, pref_val, floor_val)
+
+        col += 2  # move to next (FLOORx, PREFx)
+
+    # Update "Allocated" column → 1 if allocated else 0
+    allocated_cell.value = 1 if allocated else 0
 
     # Write into separate sheets
-    if gender.lower() == "women":
-        ws_women.append([gender, email, allocated if allocated else "Not Allocated"])
+    if category.lower() == "women":
+        ws_women.append([category, email, allocated if allocated else "Not Allocated"])
     else:
-        ws_men.append([gender, email, allocated if allocated else "Not Allocated"])
+        ws_men.append([category, email, allocated if allocated else "Not Allocated"])
 
 # Save updated Excel
 wb.save(excel_path)

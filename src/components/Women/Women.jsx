@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/Store';
 import img from "../Women/plan.jpeg";
-import "./Women.css";   // <-- CSS file
+import "./Women.css";
 
 export default function Home() {
   const navigate = useNavigate();
   const userEmail = useStore((state) => state.userEmail);
 
-  const [floors, setFloors] = useState(['', '', '', '', '']);   // ✅ now 5 floors
-  const [preferences, setPreferences] = useState(['', '', '', '', '']); // ✅ now 5 prefs
+  const [floors, setFloors] = useState(Array(12).fill(""));       // ✅ now 12 floors
+  const [preferences, setPreferences] = useState(Array(12).fill("")); // ✅ now 12 prefs
   const [selectedPreferenceIndex, setSelectedPreferenceIndex] = useState(0);
 
   const [presentRoom, setPresentRoom] = useState('');
@@ -19,8 +19,8 @@ export default function Home() {
   const rooms = [
     { number: 'MF', top: '31%', left: '46%', width: '50px', height: '190px', borderRadius: '10px' },
     { number: 'AF', top: '23%', left: '92%', width: '50px', height: '80px', borderRadius: '10px' },
-    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },  
-    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' }, 
+    { number: 'HF', top: '90%', left: '25%', width: '200px', height: '50px', borderRadius: '10%' },
+    { number: 'FF', top: '20%', left: '20%', width: '100px', height: '50px', borderRadius: '10px' },
   ];
 
   function handleRoomClick(roomNum) {
@@ -35,14 +35,13 @@ export default function Home() {
     setSelectedPreferenceIndex(index);
   }
 
-  // ✅ Random button logic
   function handleRandomFill() {
     const randomFloors = [];
     const randomPrefs = [];
     const roomNumbers = rooms.map(r => r.number);
 
-    for (let i = 0; i < 5; i++) {
-      const randFloor = Math.floor(Math.random() * 3) + 1; // floors 1–3
+    for (let i = 0; i < 12; i++) {
+      const randFloor = Math.floor(Math.random() * 3) + 1; 
       const randRoom = roomNumbers[Math.floor(Math.random() * roomNumbers.length)];
       randomFloors.push(String(randFloor));
       randomPrefs.push(randRoom);
@@ -74,18 +73,21 @@ export default function Home() {
       }
     });
 
-    const formBody = new URLSearchParams({
+    const formData = {
       Category: "Women",
-      Email: userEmail,  // ✅ still sent but hidden
+      Email: userEmail,
       PresentRoom: presentRoom,
       Hostel: hostel,
       OldFloor: oldFloor,
-      Floor1: finalFloors[0], Pref1: finalPrefs[0],
-      Floor2: finalFloors[1], Pref2: finalPrefs[1],
-      Floor3: finalFloors[2], Pref3: finalPrefs[2],
-      Floor4: finalFloors[3], Pref4: finalPrefs[3],   // ✅ added
-      Floor5: finalFloors[4], Pref5: finalPrefs[4],   // ✅ added
-    }).toString();
+    };
+
+    // Add all 12 prefs
+    for (let i = 0; i < 12; i++) {
+      formData[`Floor${i + 1}`] = finalFloors[i];
+      formData[`Pref${i + 1}`] = finalPrefs[i];
+    }
+
+    const formBody = new URLSearchParams(formData).toString();
 
     try {
       const response = await fetch(
@@ -137,7 +139,6 @@ export default function Home() {
 
           {/* User info */}
           <div className="input-row">
-            {/* Replaced email with Random button */}
             <button 
               type="button" 
               onClick={handleRandomFill} 
@@ -169,44 +170,51 @@ export default function Home() {
             </select>
           </div>
 
-          {/* Preferences */}
+          {/* Preferences (3 rows × 4) */}
           <div className="preferences">
-            {floors.map((floor, idx) => (
-              <div key={idx} className="pref-row">
-                <select
-                  value={floor}
-                  onChange={(e) => {
-                    const newFloors = [...floors];
-                    const newPrefs = [...preferences];
-                    newFloors[idx] = e.target.value;
+            {Array.from({ length: 3 }).map((_, rowIdx) => (
+              <div key={rowIdx} className="pref-row">
+                {Array.from({ length: 4 }).map((_, colIdx) => {
+                  const idx = rowIdx * 4 + colIdx;
+                  return (
+                    <div key={idx} className="pref-box">
+                      <select
+                        value={floors[idx]}
+                        onChange={(e) => {
+                          const newFloors = [...floors];
+                          const newPrefs = [...preferences];
+                          newFloors[idx] = e.target.value;
 
-                    if (e.target.value === "same") {
-                      newPrefs[idx] = presentRoom;
-                    } else {
-                      if (newPrefs[idx] === presentRoom) newPrefs[idx] = "";
-                    }
+                          if (e.target.value === "same") {
+                            newPrefs[idx] = presentRoom;
+                          } else {
+                            if (newPrefs[idx] === presentRoom) newPrefs[idx] = "";
+                          }
 
-                    setFloors(newFloors);
-                    setPreferences(newPrefs);
-                  }}
-                  className="select-input"
-                >
-                  <option value="">Select Floor</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="same">Same Room</option>
-                </select>
+                          setFloors(newFloors);
+                          setPreferences(newPrefs);
+                        }}
+                        className="select-input"
+                      >
+                        <option value="">Floor</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="same">Same Room</option>
+                      </select>
 
-                <input
-                  type="text"
-                  readOnly
-                  value={preferences[idx]}
-                  placeholder={`Preference ${idx + 1}`}
-                  onClick={() => floor !== "same" ? handlePreferenceClick(idx) : null}
-                  disabled={floor === "same"}
-                  className={`pref-input ${selectedPreferenceIndex === idx ? "active" : ""} ${floor === "same" ? "disabled" : ""}`}
-                />
+                      <input
+                        type="text"
+                        readOnly
+                        value={preferences[idx]}
+                        placeholder={`Pref ${idx + 1}`}
+                        onClick={() => floors[idx] !== "same" ? handlePreferenceClick(idx) : null}
+                        disabled={floors[idx] === "same"}
+                        className={`pref-input ${selectedPreferenceIndex === idx ? "active" : ""} ${floors[idx] === "same" ? "disabled" : ""}`}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>
